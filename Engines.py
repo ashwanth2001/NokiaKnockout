@@ -3,7 +3,7 @@ from Presets import *
 
 class Engine():
     def getAction(self, player):
-        return 3
+        return 1
 
 class RandomEngine(Engine):
     def __init__(self):

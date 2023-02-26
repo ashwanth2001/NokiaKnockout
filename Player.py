@@ -76,6 +76,23 @@ class Player(pygame.sprite.Sprite):
     def takeAttack(self, action):
         dmg = attacks[action][self.action]
         if action==3 and self.action>4:
+            '''self.text_timer = 0
+            self.text_img = miss_imgs
+            self.use_text = True
+            self.text_y = 0'''
+            return
+        elif action>2 and dmg==0 or action>4 and dmg==1:
+            '''self.text_timer = 0
+            self.text_img = block_imgs
+            self.use_text = True
+            self.text_y = 0'''
+            return
+        self.kd -= self.parts[(action+1)%2].attack(dmg)
+        self.offset = 0
+    
+    def takeBlockMiss(self, action):
+        dmg = attacks[action][self.action]
+        if action==3 and self.action>4:
             self.text_timer = 0
             self.text_img = miss_imgs
             self.use_text = True
@@ -85,6 +102,8 @@ class Player(pygame.sprite.Sprite):
             self.text_img = block_imgs
             self.use_text = True
             self.text_y = 0
+        else:
+            return
         self.kd -= self.parts[(action+1)%2].attack(dmg)
         self.offset = 0
 
@@ -92,6 +111,8 @@ class Player(pygame.sprite.Sprite):
         self.offset += offset
 
     def update(self, elapsed_time):
+        if self.action>0 and self.timer == 0 and self.act_idx == len(move_times[self.action]) - 1:
+                self.enemy.takeAttack(self.action)
         self.timer += elapsed_time
         self.text_timer += elapsed_time
         offset = 0
@@ -102,7 +123,8 @@ class Player(pygame.sprite.Sprite):
                     offset = self.facing*move_offset[self.action][self.act_idx]*-1
                     self.enemy.moveAttack(offset)
                 if self.act_idx == len(move_times[self.action]) - 1:
-                    self.enemy.takeAttack(self.action)                     # TODO make this run at the beginning of the last animation frame
+                    self.enemy.takeBlockMiss(self.action)
+                    #self.enemy.takeAttack(self.action)                     # TODO make this run at the beginning of the last animation frame
                     self.act_idx_dir = -1
                 self.timer = 0
                 self.act_idx += self.act_idx_dir
@@ -138,7 +160,7 @@ class Player(pygame.sprite.Sprite):
         screen.blit(self.move_set[self.action][self.act_idx], (self.x+self.offset*SCALE, self.y))
 
         if self.use_text:
-            screen.blit(self.text_img, (0, self.text_y))
+            screen.blit(self.text_img, (-9*SCALE*(self.facing-1), self.text_y))
 
 class Enemy(Player):
     def __init__(self, x, y, facing, engine):
