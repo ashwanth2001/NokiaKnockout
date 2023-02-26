@@ -1,5 +1,8 @@
 from GameController import GameController
+from SoundController import SoundController
 
-controller = GameController()
+sound = SoundController()
+controller = GameController(sound)
 while controller.update():
+    sound.update()
     controller.draw()

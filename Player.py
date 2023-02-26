@@ -21,6 +21,8 @@ class Part():
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, facing):
         super().__init__()
+        self.sound = None
+
         self.move_set = moves if facing==1 else moves_reflect
         self.action = 0
         self.act_idx_dir = 0
@@ -48,6 +50,9 @@ class Player(pygame.sprite.Sprite):
     def setEnemy(self, enemy):
         self.enemy = enemy
     
+    def setSound(self, sound):
+        self.sound = sound
+    
     def isReady(self):
         return self.act_idx_dir==0
     
@@ -56,6 +61,8 @@ class Player(pygame.sprite.Sprite):
 
     def canAct(self, event):
         if event.key not in convert:
+            return False
+        if self.isKnockdown() or self.enemy.isKnockdown():
             return False
         action = convert[event.key]
         if stamina_costs[action]>self.stamina:
@@ -72,8 +79,24 @@ class Player(pygame.sprite.Sprite):
     def addStamina(self, n):
         self.stamina+=n
         self.stamina = min(self.stamina, stamina_max)
+    
+    def isKnockdown(self):
+        return self.action > 6
+
+    def takeKd(self, kd, part):
+        if(kd == 0):
+            return
+        self.kd -= kd
+        self.act_idx = 0
+
+        if(part == 0):
+            self.action = 7
+        else:
+            self.action = 8
 
     def takeAttack(self, action):
+        if(action > 6 or self.action > 6):
+            return
         dmg = attacks[action][self.action]
         if action==3 and self.action>4:
             '''self.text_timer = 0
@@ -87,36 +110,44 @@ class Player(pygame.sprite.Sprite):
             self.use_text = True
             self.text_y = 0'''
             return
-        self.kd -= self.parts[(action+1)%2].attack(dmg)
+        
+        self.sound.playSoundEffect(hit_sfx)
+        self.takeKd(self.parts[(action+1)%2].attack(dmg), (action+1)%2)
+        #self.kd -= 
         self.offset = 0
     
     def takeBlockMiss(self, action):
+        if(action > 6 or self.action > 6):
+            return
         dmg = attacks[action][self.action]
         if action==3 and self.action>4:
             self.text_timer = 0
             self.text_img = miss_imgs
             self.use_text = True
             self.text_y = 0
+            self.sound.playSoundEffect(block_sfx)
         elif action>2 and dmg==0 or action>4 and dmg==1:
             self.text_timer = 0
             self.text_img = block_imgs
             self.use_text = True
             self.text_y = 0
+            self.sound.playSoundEffect(miss_sfx)
         else:
             return
-        self.kd -= self.parts[(action+1)%2].attack(dmg)
+        self.takeKd(self.parts[(action+1)%2].attack(dmg), (action+1)%2)
+        #self.kd -= self.parts[(action+1)%2].attack(dmg)
         self.offset = 0
 
     def moveAttack(self, offset):
         self.offset += offset
 
     def update(self, elapsed_time):
-        if self.action>0 and self.timer == 0 and self.act_idx == len(move_times[self.action]) - 1:
+        if self.action>0 and self.action<7 and self.timer == 0 and self.act_idx == len(move_times[self.action]) - 1:
                 self.enemy.takeAttack(self.action)
         self.timer += elapsed_time
         self.text_timer += elapsed_time
         offset = 0
-        if self.action>0:
+        if self.action>0 and self.action<7:
             mt = move_times if self.act_idx_dir>0 else reverse_move_times
             if self.timer > mt[self.action][self.act_idx]:
                 if(self.act_idx_dir == 1):
@@ -133,6 +164,14 @@ class Player(pygame.sprite.Sprite):
                 self.act_idx = 0
                 self.act_idx_dir = 0
                 self.action = 0
+        elif self.action>6: # Knockdown
+            if self.timer>move_times[self.action][self.act_idx]:
+                self.timer = 0
+                self.act_idx +=1
+                if self.act_idx == len(move_times[self.action]):
+                    self.action = 0
+                    self.act_idx = 0
+                    self.act_idx_dir = 0
         else:
             if self.timer>move_times[0][self.act_idx]:
                 self.timer = 0
@@ -157,6 +196,7 @@ class Player(pygame.sprite.Sprite):
                 screen.blit(health_bit_imgs,(-14*SCALE*(self.facing-1)+3*i*SCALE,part.loc*7*SCALE))
             for i in range(part.kd):
                 screen.blit(health_blackout_imgs,(-14*SCALE*(self.facing-1)-6*i*SCALE,part.loc*7*SCALE))
+
         screen.blit(self.move_set[self.action][self.act_idx], (self.x+self.offset*SCALE, self.y))
 
         if self.use_text:
@@ -168,6 +208,8 @@ class Enemy(Player):
         self.engine = engine
     
     def canAct(self, action):
+        if self.isKnockdown() or self.enemy.isKnockdown():
+            return False
         if stamina_costs[action]>self.stamina:
             return False
         return True

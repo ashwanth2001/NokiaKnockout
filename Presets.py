@@ -41,7 +41,8 @@ moves = [
     [pygame.image.load("Images/Moves/2/2_0.png").convert_alpha(), pygame.image.load("Images/Moves/2/2_1.png").convert_alpha(), pygame.image.load("Images/Moves/2/2_2.png").convert_alpha()],
     [pygame.image.load("Images/Moves/3/3_0.png").convert_alpha(), pygame.image.load("Images/Moves/3/3_1.png").convert_alpha(), pygame.image.load("Images/Moves/3/3_2.png").convert_alpha(), pygame.image.load("Images/Moves/3/3_3.png").convert_alpha()],
     [pygame.image.load("Images/Moves/4/4_0.png").convert_alpha(), pygame.image.load("Images/Moves/4/4_1.png").convert_alpha(), pygame.image.load("Images/Moves/4/4_2.png").convert_alpha(), pygame.image.load("Images/Moves/4/4_3.png").convert_alpha()],
-
+    [pygame.image.load("Images/Moves/kd/k1_0.png").convert_alpha(), pygame.image.load("Images/Moves/kd/k1_1.png").convert_alpha(), pygame.image.load("Images/Moves/kd/k1_2.png").convert_alpha(), pygame.image.load("Images/Moves/kd/k1_3.png").convert_alpha(), pygame.image.load("Images/Moves/kd/k1_4.png").convert_alpha()],
+    [pygame.image.load("Images/Moves/kd/k2_0.png").convert_alpha(), pygame.image.load("Images/Moves/kd/k2_1.png").convert_alpha(), pygame.image.load("Images/Moves/kd/k2_2.png").convert_alpha(), pygame.image.load("Images/Moves/kd/k2_3.png").convert_alpha()]
 ]
 
 moves_reflect = [[pygame.transform.flip(ci, True, False) for ci in cj] for cj in moves]
@@ -54,6 +55,8 @@ move_times = [
     [100, 100, 250],
     [100, 100, 100, 500],
     [100, 100, 100, 500],
+    [100, 200, 200, 300, 2000],
+    [100, 200, 300, 2000],
 ]
 
 text_time = 250
@@ -72,6 +75,8 @@ move_offset = [
     [1, 1, 1],
     [0, 2, 3, 2],
     [0, 2, 3, 2],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0],
 ]
 
 convert = {
@@ -102,5 +107,14 @@ attacks = [
 
 stamina_costs = [0, 1, 1, 3, 3, 5, 5]
 stamina_max = 9
+
+# Sounds
+
+background_track = "Sounds/back_1.wav"
+
+hit_sfx = "Sounds/hit.wav"
+block_sfx = "Sounds/block.wav"
+miss_sfx = "Sounds/miss.wav"
+kd_sfx = "Sounds/knockdown.wav"
 
 pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])

@@ -4,12 +4,17 @@ from MyEnums import *
 import pygame
 
 class GameController():
-    def __init__(self):
+    def __init__(self, sound):
+        self.sound = sound
+
         self.player1 = Player(-4*SCALE, 35*SCALE, 1)
         self.player2 = Enemy(18*SCALE, 35*SCALE, -1, RandomEngine())
 
         self.player1.setEnemy(self.player2)
         self.player2.setEnemy(self.player1)
+
+        self.player1.setSound(self.sound)
+        self.player2.setSound(self.sound)
 
         self.all_sprites = [self.player1, self.player2]
         self.state = GameState.INTRO
@@ -36,6 +41,7 @@ class GameController():
 
         self.stamina_timer = 0
         self.stamina_tick = 1000
+        #self.stamina_tick = 1
 
         self.priority_player = 0
         self.animate_idx = 0
