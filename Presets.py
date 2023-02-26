@@ -23,6 +23,8 @@ blank_green_imgs = pygame.image.load("Images/blank.png").convert_alpha()
 game_over_screen_imgs = pygame.image.load("Images/gameover.png").convert_alpha()
 block_imgs = pygame.image.load("Images/block.png").convert_alpha()
 miss_imgs = pygame.image.load("Images/miss.png").convert_alpha()
+player_wins_imgs = pygame.image.load("Images/playerwins.png").convert_alpha()
+enemy_wins_imgs = pygame.image.load("Images/enemywins.png").convert_alpha()
 
 background_imgs = [
     pygame.image.load("Images/background_0.png").convert_alpha(),
@@ -31,6 +33,7 @@ background_imgs = [
     pygame.image.load("Images/background_3.png").convert_alpha(),
     pygame.image.load("Images/background_4.png").convert_alpha(),
     pygame.image.load("Images/background_5.png").convert_alpha(),
+    pygame.image.load("Images/background_6.png").convert_alpha(),
 ]
 
 moves = [
