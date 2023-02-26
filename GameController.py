@@ -47,7 +47,6 @@ class GameController():
 
         self.stamina_timer = 0
         self.stamina_tick = 1000
-        self.stamina_tick = 1
 
         self.priority_player = 0
         self.animate_idx = 0
@@ -111,6 +110,11 @@ class GameController():
         else:
             if self.end_timer < self.end_finish_animation_tick:
                 self.updateGame()
+        for event in self.events:
+            if event.type == pygame.KEYDOWN:
+                self.timer = 0
+                self.state = GameState.INTRO
+                self.__init__(self.sound)
     
     def drawEnd(self):
         if self.end_timer > self.end_transition_tick:

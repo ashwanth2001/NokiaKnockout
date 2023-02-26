@@ -42,7 +42,6 @@ class Player(pygame.sprite.Sprite):
 
         self.stamina = 5
         self.kd = 3
-        #self.kd = 1
         self.draw_priority = 5
 
         self.parts = [Part(0), Part(1)]
