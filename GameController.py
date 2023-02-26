@@ -162,7 +162,6 @@ class GameController():
         offset2 = self.player2.update(self.elapsed_time)
 
         self.background_position += offset1 + offset2
-        self.background_position %= len(background_imgs)*48
 
         self.stamina_timer+=self.elapsed_time
 
@@ -192,6 +191,7 @@ class GameController():
     def drawGame(self):
         index = int(self.background_position/48)
         position = self.background_position - index*48
+        print(index, position)
         
         for i in range(-1, 2):
             self.screen.blit(background_imgs[(index+i)%len(background_imgs)], (i*48*SCALE+position*SCALE,0))
