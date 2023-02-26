@@ -13,7 +13,6 @@ surface = pygame.display.set_mode([WIDTH, HEIGHT], flags, 16)
 
 
 health_bar_imgs = pygame.image.load("Images/healthbars.png").convert_alpha()
-background_img = pygame.image.load("Images/background.png").convert_alpha()
 stamina_bar_imgs = pygame.image.load("Images/staminabar.png").convert_alpha()
 stamina_bit_imgs = pygame.image.load("Images/staminabit.png").convert_alpha()
 health_bit_imgs = pygame.image.load("Images/healthbit.png").convert_alpha()
@@ -24,6 +23,15 @@ blank_green_imgs = pygame.image.load("Images/blank.png").convert_alpha()
 game_over_screen_imgs = pygame.image.load("Images/gameover.png").convert_alpha()
 block_imgs = pygame.image.load("Images/block.png").convert_alpha()
 miss_imgs = pygame.image.load("Images/miss.png").convert_alpha()
+
+background_imgs = [
+    pygame.image.load("Images/background_0.png").convert_alpha(),
+    pygame.image.load("Images/background_1.png").convert_alpha(),
+    pygame.image.load("Images/background_2.png").convert_alpha(),
+    pygame.image.load("Images/background_3.png").convert_alpha(),
+    pygame.image.load("Images/background_4.png").convert_alpha(),
+    pygame.image.load("Images/background_5.png").convert_alpha(),
+]
 
 moves = [
     [pygame.image.load("Images/Moves/idle/idle_0.png").convert_alpha(), pygame.image.load("Images/Moves/idle/idle_1.png").convert_alpha()],
@@ -39,9 +47,9 @@ moves = [
 moves_reflect = [[pygame.transform.flip(ci, True, False) for ci in cj] for cj in moves]
 
 move_times = [
-    [100, 100],
-    [250],
-    [250],
+    [250, 250],
+    [750],
+    [750],
     [100, 250, 100, 500],
     [100, 100, 250],
     [100, 100, 100, 500],
@@ -60,10 +68,10 @@ move_offset = [
     [0, 0],
     [0, 0],
     [0, 0],
-    [0, 2, 3, 4],
-    [0, 2, 3],
-    [0, 2, 5, 7],
-    [0, 2, 5, 7],
+    [1, 1, 1, 1],
+    [1, 1, 1],
+    [0, 2, 3, 2],
+    [0, 2, 3, 2],
 ]
 
 convert = {

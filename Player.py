@@ -36,6 +36,7 @@ class Player(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.facing = facing
+        self.offset = 0
 
         self.stamina = 5
         self.kd = 3
@@ -85,15 +86,23 @@ class Player(pygame.sprite.Sprite):
             self.use_text = True
             self.text_y = 0
         self.kd -= self.parts[(action+1)%2].attack(dmg)
+        self.offset = 0
+
+    def moveAttack(self, offset):
+        self.offset += offset
 
     def update(self, elapsed_time):
         self.timer += elapsed_time
         self.text_timer += elapsed_time
+        offset = 0
         if self.action>0:
             mt = move_times if self.act_idx_dir>0 else reverse_move_times
             if self.timer > mt[self.action][self.act_idx]:
+                if(self.act_idx_dir == 1):
+                    offset = self.facing*move_offset[self.action][self.act_idx]*-1
+                    self.enemy.moveAttack(offset)
                 if self.act_idx == len(move_times[self.action]) - 1:
-                    self.enemy.takeAttack(self.action)
+                    self.enemy.takeAttack(self.action)                     # TODO make this run at the beginning of the last animation frame
                     self.act_idx_dir = -1
                 self.timer = 0
                 self.act_idx += self.act_idx_dir
@@ -114,6 +123,8 @@ class Player(pygame.sprite.Sprite):
                 self.use_text = False
                 self.text_timer = 0
                 self.text_img = None
+        
+        return offset
 
     def draw(self, screen):
         for i in range(self.stamina):
@@ -124,7 +135,7 @@ class Player(pygame.sprite.Sprite):
                 screen.blit(health_bit_imgs,(-14*SCALE*(self.facing-1)+3*i*SCALE,part.loc*7*SCALE))
             for i in range(part.kd):
                 screen.blit(health_blackout_imgs,(-14*SCALE*(self.facing-1)-6*i*SCALE,part.loc*7*SCALE))
-        screen.blit(self.move_set[self.action][self.act_idx], (self.x + self.facing*move_offset[self.action][self.act_idx]*10, self.y))
+        screen.blit(self.move_set[self.action][self.act_idx], (self.x+self.offset*SCALE, self.y))
 
         if self.use_text:
             screen.blit(self.text_img, (0, self.text_y))
@@ -133,12 +144,18 @@ class Enemy(Player):
     def __init__(self, x, y, facing, engine):
         super().__init__(x, y, facing)
         self.engine = engine
+    
+    def canAct(self, action):
+        if stamina_costs[action]>self.stamina:
+            return False
+        return True
 
     def engineAct(self):
         if not self.isReady():
             return
         action = self.engine.getAction(self)
-        self.act(action)
+        if not action == 0 and self.canAct(action):
+            self.act(action)
     
 
     

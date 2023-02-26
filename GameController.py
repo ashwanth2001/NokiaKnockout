@@ -6,7 +6,7 @@ import pygame
 class GameController():
     def __init__(self):
         self.player1 = Player(-4*SCALE, 35*SCALE, 1)
-        self.player2 = Enemy(18*SCALE, 35*SCALE, -1, Engine())
+        self.player2 = Enemy(18*SCALE, 35*SCALE, -1, RandomEngine())
 
         self.player1.setEnemy(self.player2)
         self.player2.setEnemy(self.player1)
@@ -35,14 +35,17 @@ class GameController():
         self.shake_idx = 0
 
         self.stamina_timer = 0
-        self.stamina_tick = 750
+        self.stamina_tick = 1000
 
         self.priority_player = 0
         self.animate_idx = 0
+
+        self.background_position = 0
         
 
     def update(self):
         if self.state == GameState.END:
+            print("END!!")
             return False
 
         self.elapsed_time = self.clock.tick(frame_rate)
@@ -94,7 +97,7 @@ class GameController():
 
     def drawIntroTransition(self):
         self.screen.blit(blank_green_imgs,(0,0))
-        self.screen.blit(background_img,(0,27*SCALE-self.intro_transition_idx*SCALE))
+        self.screen.blit(background_imgs[0],(0,27*SCALE-self.intro_transition_idx*SCALE))
         self.screen.blit(start_screeen_imgs,(0,-self.intro_transition_idx*SCALE))
 
         self.screen.blit(moves[0][0], (self.player1.x, self.player1.y+27*SCALE-self.intro_transition_idx*SCALE))
@@ -104,8 +107,10 @@ class GameController():
         if not self.player1.isAlive() or not self.player2.isAlive():
             self.state = GameState.END
 
-        self.player1.update(self.elapsed_time)
-        self.player2.update(self.elapsed_time)
+        offset1 = self.player1.update(self.elapsed_time)
+        offset2 = self.player2.update(self.elapsed_time)
+
+        self.background_position += offset1 + offset2
 
         self.stamina_timer+=self.elapsed_time
 
@@ -133,7 +138,12 @@ class GameController():
             self.player2.engineAct()
     
     def drawGame(self):
-        self.screen.blit(background_img, (0,0))
+        index = int(self.background_position/48)
+        position = self.background_position - index*48
+        
+        for i in range(-1, 2):
+            self.screen.blit(background_imgs[(index+i)%len(background_imgs)], (i*48*SCALE+position*SCALE,0))
+        
         self.screen.blit(health_bar_imgs, (0,0))
         self.screen.blit(stamina_bar_imgs, (0,0))
 
