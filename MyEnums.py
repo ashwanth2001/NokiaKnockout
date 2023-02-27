@@ -6,3 +6,4 @@ class GameState(Enum):
     INTRO_TRANSITION = 3
     GAME = 4
     END = 5
+    QUIT = 6

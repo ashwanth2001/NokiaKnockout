@@ -46,6 +46,9 @@ class Player(pygame.sprite.Sprite):
 
         self.parts = [Part(0), Part(1)]
         self.enemy = None
+
+        self.spam_count = 0
+        self.spam_threshold = 25
     
     def setEnemy(self, enemy):
         self.enemy = enemy
@@ -86,6 +89,9 @@ class Player(pygame.sprite.Sprite):
     def takeKd(self, kd, part):
         if(kd == 0):
             return
+
+        self.sound.playSoundEffect(kd_sfx)
+        
         self.kd -= kd
         self.act_idx = 0
 
@@ -165,13 +171,7 @@ class Player(pygame.sprite.Sprite):
                 self.act_idx_dir = 0
                 self.action = 0
         elif self.action>6: # Knockdown
-            if self.timer>move_times[self.action][self.act_idx]:
-                self.timer = 0
-                self.act_idx +=1
-                if self.act_idx == len(move_times[self.action]):
-                    self.action = 0
-                    self.act_idx = 0
-                    self.act_idx_dir = 0
+            self.tryGetUp()
         else:
             if self.timer>move_times[0][self.act_idx]:
                 self.timer = 0
@@ -186,6 +186,20 @@ class Player(pygame.sprite.Sprite):
                 self.text_img = None
         
         return offset
+    
+    def tryGetUp(self):
+        if self.act_idx == len(move_times[self.action])-1:
+            if self.spam_count > self.spam_threshold:
+                self.action = 0
+                self.act_idx = 0
+                self.act_idx_dir = 0
+        elif self.timer>move_times[self.action][self.act_idx]:
+            self.timer = 0
+            self.act_idx +=1
+            '''if self.act_idx == len(move_times[self.action]):
+                self.action = 0
+                self.act_idx = 0
+                self.act_idx_dir = 0'''
 
     def draw(self, screen):
         for i in range(self.stamina):
@@ -220,6 +234,15 @@ class Enemy(Player):
         action = self.engine.getAction(self)
         if not action == 0 and self.canAct(action):
             self.act(action)
+    
+    def tryGetUp(self):
+        if self.timer>move_times[self.action][self.act_idx]:
+            self.timer = 0
+            self.act_idx +=1
+            if self.act_idx == len(move_times[self.action]):
+                self.action = 0
+                self.act_idx = 0
+                self.act_idx_dir = 0
     
 
     

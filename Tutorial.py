@@ -2,10 +2,9 @@ from Presets import *
 
 class Tutorial():
     def __init__(self):
-        self.key_list = ["Q", "A", "W", "S", "E", "D"]
         self.teach_key = 0
 
-        self.teach_tick = 500
+        self.teach_tick = 3000
         self.timer = 0
     
     def draw(self, screen):

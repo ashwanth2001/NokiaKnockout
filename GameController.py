@@ -31,7 +31,7 @@ class GameController():
         self.intro_flash_tick = 750
         self.intro_flash = False
 
-        self.mode_select_tick = 200
+        self.mode_select_tick = 100
         self.engine_modes = [
             TutorialEngine(),
             Engine(),
@@ -88,6 +88,8 @@ class GameController():
         if self.state == GameState.END:
             self.end_timer += self.elapsed_time
             self.updateEnd()
+        if self.state == GameState.QUIT:
+            return False
         return True
 
     def draw(self):
@@ -111,7 +113,7 @@ class GameController():
         for event in self.events:
             if event.type == pygame.QUIT:
                 self.timer = 0
-                self.state = GameState.END
+                self.state = GameState.QUIT
             elif event.type == pygame.KEYDOWN:
                 self.timer = 0
                 self.state = GameState.MODE_SELECT
@@ -129,7 +131,7 @@ class GameController():
             for event in self.events:
                 if event.type == pygame.QUIT:
                     self.timer = 0
-                    self.state = GameState.END
+                    self.state = GameState.QUIT
                 elif event.type == pygame.KEYDOWN:
                     if event.key == K_w:
                         self.mode -= 1
@@ -231,9 +233,11 @@ class GameController():
         for event in self.events:
             if event.type == pygame.QUIT:
                 self.timer = 0
-                self.state = GameState.END
+                self.state = GameState.QUIT
             elif event.type == pygame.KEYDOWN and self.player1.isReady() and self.player1.canAct(event):
                 self.player1.act(convert[event.key])
+            elif event.type == pygame.KEYDOWN and self.player1.isKnockdown():
+                self.player1.spam_count += 1
         
         if self.player2.isReady():
             self.player2.engineAct()

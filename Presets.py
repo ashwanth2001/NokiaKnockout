@@ -40,6 +40,7 @@ teach_imgs = [
     pygame.image.load("Images/tut_s.png").convert_alpha(),
     pygame.image.load("Images/tut_e.png").convert_alpha(),
     pygame.image.load("Images/tut_d.png").convert_alpha(),
+    pygame.image.load("Images/tut_kd.png").convert_alpha(),
 ]
 
 background_imgs = [
@@ -129,7 +130,7 @@ stamina_max = 9
 
 # Sounds
 
-background_track = "Sounds/back_1.wav"
+background_track = "Sounds/back_2.wav"
 
 hit_sfx = "Sounds/hit.wav"
 block_sfx = "Sounds/block.wav"
