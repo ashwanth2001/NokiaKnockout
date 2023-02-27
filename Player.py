@@ -148,11 +148,10 @@ class Player(pygame.sprite.Sprite):
         self.offset += offset
 
     def update(self, elapsed_time):
-        if self.action>0 and self.action<7 and self.timer == 0 and self.act_idx == len(move_times[self.action]) - 1:
-                self.enemy.takeAttack(self.action)
         self.timer += elapsed_time
         self.text_timer += elapsed_time
         offset = 0
+
         if self.action>0 and self.action<7:
             mt = move_times if self.act_idx_dir>0 else reverse_move_times
             if self.timer > mt[self.action][self.act_idx]:
@@ -161,11 +160,12 @@ class Player(pygame.sprite.Sprite):
                     self.enemy.moveAttack(offset)
                 if self.act_idx == len(move_times[self.action]) - 1:
                     self.enemy.takeBlockMiss(self.action)
-                    #self.enemy.takeAttack(self.action)                     # TODO make this run at the beginning of the last animation frame
                     self.act_idx_dir = -1
                 self.timer = 0
                 self.act_idx += self.act_idx_dir
                 self.act_idx = max(0, self.act_idx)
+                if self.act_idx==len(move_times[self.action]) - 1:
+                    self.enemy.takeAttack(self.action)
             if self.act_idx==0 and self.act_idx_dir==-1:
                 self.act_idx = 0
                 self.act_idx_dir = 0
@@ -190,6 +190,7 @@ class Player(pygame.sprite.Sprite):
     def tryGetUp(self):
         if self.act_idx == len(move_times[self.action])-1:
             if self.spam_count > self.spam_threshold:
+                self.spam_count = 0
                 self.action = 0
                 self.act_idx = 0
                 self.act_idx_dir = 0

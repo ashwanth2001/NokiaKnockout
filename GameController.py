@@ -36,7 +36,7 @@ class GameController():
             TutorialEngine(),
             Engine(),
             RandomEngine(),
-            RandomEngine(),
+            GoodEngine(),
         ]
         self.tutorial = None
 
