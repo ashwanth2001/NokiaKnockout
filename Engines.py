@@ -5,6 +5,10 @@ class Engine():
     def getAction(self, player):
         return 1
 
+class TutorialEngine(Engine):
+    def getAction(self, player):
+        return 0
+
 class RandomEngine(Engine):
     def __init__(self):
         super().__init__()

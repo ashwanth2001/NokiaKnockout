@@ -1,6 +1,7 @@
 from Player import *
 from Presets import *
 from MyEnums import *
+from Tutorial import *
 import pygame
 
 class GameController():
@@ -8,7 +9,7 @@ class GameController():
         self.sound = sound
 
         self.player1 = Player(-4*SCALE, 35*SCALE, 1)
-        self.player2 = Enemy(18*SCALE, 35*SCALE, -1, RandomEngine())
+        self.player2 = Enemy(18*SCALE, 35*SCALE, -1, Engine())
 
         self.player1.setEnemy(self.player2)
         self.player2.setEnemy(self.player1)
@@ -30,9 +31,20 @@ class GameController():
         self.intro_flash_tick = 750
         self.intro_flash = False
 
+        self.mode_select_tick = 200
+        self.engine_modes = [
+            TutorialEngine(),
+            Engine(),
+            RandomEngine(),
+            RandomEngine(),
+        ]
+        self.tutorial = None
+
         self.intro_transition_idx = 0
         self.intro_transition_max = 27
         self.intro_transition_tick = 20
+
+        self.mode = 0
 
         self.end_transition_tick = 4000
         self.end_finish_animation_tick = 1000
@@ -62,8 +74,13 @@ class GameController():
 
         self.events = pygame.event.get()
 
+        if not self.tutorial == None:
+            self.tutorial.update(self.elapsed_time)
+
         if self.state == GameState.INTRO:
             self.updateIntro()
+        if self.state == GameState.MODE_SELECT:
+            self.updateModeSelect()
         if self.state == GameState.INTRO_TRANSITION:
             self.updateIntroTransition()
         if self.state == GameState.GAME:
@@ -76,12 +93,18 @@ class GameController():
     def draw(self):
         if self.state == GameState.INTRO:
             self.drawIntro()
+        if self.state == GameState.MODE_SELECT:
+            self.drawModeSelect()
         if self.state == GameState.INTRO_TRANSITION:
             self.drawIntroTransition()
         if self.state == GameState.GAME:
             self.drawGame()
         if self.state == GameState.END:
             self.drawEnd()
+        
+        if not self.tutorial == None:
+            self.tutorial.draw(self.screen)
+        
         pygame.display.flip()
     
     def updateIntro(self):
@@ -91,7 +114,7 @@ class GameController():
                 self.state = GameState.END
             elif event.type == pygame.KEYDOWN:
                 self.timer = 0
-                self.state = GameState.INTRO_TRANSITION
+                self.state = GameState.MODE_SELECT
         if self.timer>self.intro_flash_tick:
             self.intro_flash = not self.intro_flash
             self.timer = 0
@@ -100,6 +123,30 @@ class GameController():
         self.screen.blit(start_screeen_imgs,(0,0))
         if self.intro_flash:
             self.screen.blit(press_to_start_imgs,(0,0))
+    
+    def updateModeSelect(self):
+        if self.timer > self.mode_select_tick:
+            for event in self.events:
+                if event.type == pygame.QUIT:
+                    self.timer = 0
+                    self.state = GameState.END
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == K_w:
+                        self.mode -= 1
+                        self.mode %= 4
+                        self.timer = 0
+                    elif event.key == K_s:
+                        self.mode += 1
+                        self.mode %= 4
+                        self.timer = 0
+                    elif not event.key == K_UP and not event.key == K_DOWN and not event.key == K_LEFT and not event.key == K_RIGHT:
+                        self.timer = 0
+                        self.state = GameState.INTRO_TRANSITION
+                        self.player2.engine = self.engine_modes[self.mode]
+
+    def drawModeSelect(self):
+        self.screen.blit(start_screeen_imgs,(0,0))
+        self.screen.blit(mode_imgs[self.mode],(0,0))
 
     def updateEnd(self):
         if self.end_timer > self.end_transition_tick:
@@ -140,6 +187,9 @@ class GameController():
         if self.intro_transition_idx>27:
             self.timer = 0
             self.state = GameState.GAME
+            if self.mode == 0:
+                # Tutorial
+                self.tutorial = Tutorial()
 
     def drawIntroTransition(self):
         self.screen.blit(blank_green_imgs,(0,0))
@@ -148,7 +198,7 @@ class GameController():
 
         self.screen.blit(moves[0][0], (self.player1.x, self.player1.y+27*SCALE-self.intro_transition_idx*SCALE))
         self.screen.blit(moves_reflect[0][0], (self.player2.x, self.player2.y+27*SCALE-self.intro_transition_idx*SCALE))
-    
+
     def updateGame(self):
         if not self.player1.isAlive() or not self.player2.isAlive():
             self.state = GameState.END
@@ -191,7 +241,6 @@ class GameController():
     def drawGame(self):
         index = int(self.background_position/48)
         position = self.background_position - index*48
-        print(index, position)
         
         for i in range(-1, 2):
             self.screen.blit(background_imgs[(index+i)%len(background_imgs)], (i*48*SCALE+position*SCALE,0))

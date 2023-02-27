@@ -26,6 +26,22 @@ miss_imgs = pygame.image.load("Images/miss.png").convert_alpha()
 player_wins_imgs = pygame.image.load("Images/playerwins.png").convert_alpha()
 enemy_wins_imgs = pygame.image.load("Images/enemywins.png").convert_alpha()
 
+mode_imgs = [
+    pygame.image.load("Images/mode_tutorial.png").convert_alpha(),
+    pygame.image.load("Images/mode_easy.png").convert_alpha(),
+    pygame.image.load("Images/mode_medium.png").convert_alpha(),
+    pygame.image.load("Images/mode_hard.png").convert_alpha(),
+]
+
+teach_imgs = [
+    pygame.image.load("Images/tut_q.png").convert_alpha(),
+    pygame.image.load("Images/tut_a.png").convert_alpha(),
+    pygame.image.load("Images/tut_w.png").convert_alpha(),
+    pygame.image.load("Images/tut_s.png").convert_alpha(),
+    pygame.image.load("Images/tut_e.png").convert_alpha(),
+    pygame.image.load("Images/tut_d.png").convert_alpha(),
+]
+
 background_imgs = [
     pygame.image.load("Images/background_0.png").convert_alpha(),
     pygame.image.load("Images/background_1.png").convert_alpha(),
