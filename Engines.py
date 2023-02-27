@@ -46,22 +46,31 @@ class GoodEngine(Engine):
         self.dist = [0, 0, 0, 0.15, 0.15, 0.35, 0.35]
         self.cumsum = [sum(self.dist[0:i]) for i in range(len(self.dist))]
         self.defend = 0
+
+        self.wait_timer = 0
+        self.wait_tick = 0
     
     def getAction(self, player):
         if player.enemy.action==0:
             self.defend = 0
         if player.enemy.action>2 and player.enemy.act_idx_dir>0 and player.canAct(1):
             if self.defend==0:
-                self.defend = 1 if random.uniform(0, 1)<0.33 else -1
+                self.defend = 1 if random.uniform(0, 1)<0.5 else -1
                 if self.defend==1:
                     return 1 if player.enemy.action%2==1 else 2
         if self.choice==0:
             r = random.uniform(0, 1)
             for i in range(len(self.cumsum)):
                 if r<self.cumsum[i]:
-                    return i
+                    self.wait_tick = random.randint(33, 100)
+                    self.choice = i
         if player.canAct(self.choice):
-            action = self.choice
-            self.choice = 0
-            return action
+            if self.wait_timer>self.wait_tick:
+                action = self.choice
+                self.choice = 0
+                self.wait_tick = 0
+                self.wait_timer = 0
+                return action
+            else:
+                self.wait_timer+=1
         return 0

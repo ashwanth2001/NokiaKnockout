@@ -159,13 +159,13 @@ class Player(pygame.sprite.Sprite):
                     offset = self.facing*move_offset[self.action][self.act_idx]*-1
                     self.enemy.moveAttack(offset)
                 if self.act_idx == len(move_times[self.action]) - 1:
-                    self.enemy.takeBlockMiss(self.action)
                     self.act_idx_dir = -1
                 self.timer = 0
                 self.act_idx += self.act_idx_dir
                 self.act_idx = max(0, self.act_idx)
                 if self.act_idx==len(move_times[self.action]) - 1:
                     self.enemy.takeAttack(self.action)
+                    self.enemy.takeBlockMiss(self.action)
             if self.act_idx==0 and self.act_idx_dir==-1:
                 self.act_idx = 0
                 self.act_idx_dir = 0
