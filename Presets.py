@@ -40,6 +40,7 @@ teach_imgs = [
     pygame.image.load("Images/tut_s.png").convert_alpha(),
     pygame.image.load("Images/tut_e.png").convert_alpha(),
     pygame.image.load("Images/tut_d.png").convert_alpha(),
+    pygame.image.load("Images/tut_range.png").convert_alpha(),
     pygame.image.load("Images/tut_kd.png").convert_alpha(),
 ]
 

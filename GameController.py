@@ -34,7 +34,7 @@ class GameController():
         self.mode_select_tick = 100
         self.engine_modes = [
             TutorialEngine(),
-            Engine(),
+            RandomBlocksEngine(),
             RandomEngine(),
             GoodEngine(),
         ]
